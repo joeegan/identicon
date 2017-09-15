@@ -9,6 +9,7 @@ const {
   compose,
   constructN,
   divide,
+  dropLast,
   filter,
   flatten,
   forEach,
@@ -30,19 +31,30 @@ const {
 } = require('ramda')
 
 const png = new PNG({
-  width: 100,
-  height: 100,
+  width: 500,
+  height: 500,
   filterType: -1,
 })
 
-png.data = flatten(
-  range(0, png.height).map(y => {
-    return range(0, png.width).map(x => {
-      return [255, 0, 185, 255]
-    })
-  })
+const pink = [255, 0, 185, 255]
+const grey = [100, 100, 100, 255]
+const getColor = n => (n / 100 % 2 == 0 ? pink : grey)
+
+// [[0, 99, [255, 0, 185, 255], ...]
+const rangesWithRgba = map(
+  compose(n => [n, n + 99, getColor(n)], multiply(100)),
+  range(0, 6),
 )
 
-console.log(png.data)
+png.data = flatten(
+  map(
+    h =>
+      map(
+        w => rangesWithRgba.find(r => h < r[1])[2],
+        range(0, png.width),
+      ),
+    range(0, png.height),
+  ),
+)
 
 png.pack().pipe(fs.createWriteStream('identicon.png'))
