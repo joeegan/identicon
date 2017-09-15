@@ -1,0 +1,15 @@
+{
+  "name": "identicon",
+  "version": "1.0.0",
+  "description": "Using: https://stackoverflow.com/questions/32259142/how-to-use-pngjs-library-to-create-png-from-rgb-matrix#answer-32260288",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pngjs": "^3.3.0",
+    "ramda": "^0.24.1"
+  }
+}
