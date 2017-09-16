@@ -14,6 +14,7 @@ const {
   findIndex,
   flatten,
   forEach,
+  head,
   invoker,
   inc,
   join,
@@ -30,6 +31,7 @@ const {
   set,
   splitEvery,
   take,
+  times,
   mapObjIndexed,
 } = require('ramda')
 
@@ -39,6 +41,13 @@ const png = new PNG({
   filterType: -1,
 })
 
+const pink = [200, 50, 100, 255]
+const grey = [200, 200, 200, 255]
+
+const GRID_PIXEL_SIZE = 500
+const CELL_SIZE = 100
+const CELLS_PER_ROW = 500 / 100
+
 // const grid  = [
 //   [100, 200, 300, 400, 500],
 //   [100, 200, 300, 400, 500],
@@ -46,14 +55,11 @@ const png = new PNG({
 //   [100, 200, 300, 400, 500],
 //   [100, 200, 300, 400, 500],
 // ]
-const grid = map(
-  n => map(n => n * 100, range(1, 6)),
-  range(0, 5),
+const grid = times(
+  n =>
+    times(n => multiply(inc(n), CELL_SIZE), CELLS_PER_ROW),
+  CELL_SIZE,
 )
-console.log('grid', JSON.stringify(grid))
-
-const pink = [255, 0, 185, 255]
-const grey = [100, 100, 100, 255]
 
 // temp
 const random = (...args) =>
@@ -66,29 +72,31 @@ const random = (...args) =>
 //   [blue, grey, blue, grey, blue],
 //   [blue, grey, grey, grey, blue],
 // ]
-const randomColors = map(
-  n => map(n => random(pink, grey), range(0, 5)),
+const randomColorsGrid = map(
+  n => times(n => random(pink, grey), CELLS_PER_ROW),
   range(0, 5),
 )
 
+const getVertIdx = (h, grid) =>
+  addIndex(findIndex)((row, idx) =>
+    lt(h, multiply(inc(idx), 100)),
+  )(grid)
+
+const getHorizIdx = (w, grid) =>
+  findIndex(n => lt(w, n), head(grid))
+
 png.data = flatten(
-  map(
+  times(
     h =>
-      map(
-        // h 240, w 99 = randomColors[2][0]
-        w => {
-          const hIdx = addIndex(findIndex)(
-            (row, idx) => lt(h, multiply(inc(idx), 100)),
-            grid,
-          )
-          const wIdx = grid[0].findIndex(n => lt(w, n))
-          return randomColors[hIdx][wIdx]
-        },
-        range(0, png.width),
+      times(
+        w =>
+          randomColorsGrid[getVertIdx(h, grid)][
+            getHorizIdx(w, grid)
+          ],
+        GRID_PIXEL_SIZE,
       ),
-    range(0, png.height),
+    GRID_PIXEL_SIZE,
   ),
 )
-console.log(png.data[0])
 
 png.pack().pipe(fs.createWriteStream('identicon.png'))
