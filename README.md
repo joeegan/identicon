@@ -4,9 +4,9 @@ Create and identicon following these steps:
 
 http://writings.orangegnome.com/writes/creating-identicons/
 
-Get String
-Convert string to MD5 hash (take first 15 of this 42 varchar and mirror it)
-Extract identicon color from hash (use the first 3 numbers of hash as RGB)
-Convert hash values to boolean values to determine each block in the 5×5 grid (paint 'odd' values as colours)
-Draw image based off of values
-Output image
+* Get String
+* Convert string to MD5 hash (take first 15 of this 42 varchar and mirror it)
+* Extract identicon color from hash (use the first 3 numbers of hash as RGB)
+* Convert hash values to boolean values to determine each block in the 5×5 grid (paint 'odd' values as colours)
+* Draw image based off of values
+* Output image

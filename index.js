@@ -10,6 +10,7 @@ const {
   constructN,
   divide,
   dropLast,
+  equals,
   filter,
   findIndex,
   flatten,
@@ -20,6 +21,7 @@ const {
   join,
   juxt,
   lens,
+  length,
   lt,
   map,
   modulo,
@@ -28,12 +30,15 @@ const {
   not,
   prop,
   range,
+  reject,
   set,
   splitEvery,
   take,
   times,
   mapObjIndexed,
 } = require('ramda')
+
+const crypto = require('crypto')
 
 const png = new PNG({
   width: 500,
@@ -48,39 +53,50 @@ const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
 const CELLS_PER_ROW = 500 / 100
 
-// const grid  = [
-//   [100, 200, 300, 400, 500],
-//   [100, 200, 300, 400, 500],
-//   [100, 200, 300, 400, 500],
-//   [100, 200, 300, 400, 500],
-//   [100, 200, 300, 400, 500],
-// ]
 const grid = times(
   n =>
     times(n => multiply(inc(n), CELL_SIZE), CELLS_PER_ROW),
   CELL_SIZE,
 )
 
-// temp
-const random = (...args) =>
-  args[Math.floor(Math.random() * 2)]
+const seed = 'salad'
+const hash = crypto
+  .createHash('md5')
+  .update(seed)
+  .digest('hex')
 
-// const randomColors = [
-//   [blue, grey, blue, grey, blue],
-//   [blue, blue, blue, blue, blue],
-//   [grey, grey, blue, grey, grey],
-//   [blue, grey, blue, grey, blue],
-//   [blue, grey, grey, grey, blue],
-// ]
-const randomColorsGrid = map(
-  n => times(n => random(pink, grey), CELLS_PER_ROW),
-  range(0, 5),
+const colorBasedOffHash = hash => [
+  parseInt(hash.substring(0, 2), 16),
+  parseInt(hash.substring(2, 4), 16),
+  parseInt(hash.substring(4, 6), 16),
+  255,
+]
+
+const mirror = arr => {
+  return addIndex(reject)(
+    (n, i, arr) => equals(i, divide(length(arr), 2)),
+    [...arr, ...arr.reverse()],
+  )
+}
+
+const colorsGrid = addIndex(map)(
+  compose(mirror, (arr, i) =>
+    times(
+      n =>
+        modulo(parseInt(hash[n + i], 16), 2) == 0
+          ? colorBasedOffHash(hash)
+          : grey,
+      3,
+    ),
+  ),
+  times(n => [], 5),
 )
 
 const getVertIdx = (h, grid) =>
-  addIndex(findIndex)((row, idx) =>
-    lt(h, multiply(inc(idx), 100)),
-  )(grid)
+  addIndex(findIndex)(
+    (row, idx) => lt(h, multiply(inc(idx), 100)),
+    grid,
+  )
 
 const getHorizIdx = (w, grid) =>
   findIndex(n => lt(w, n), head(grid))
@@ -90,7 +106,7 @@ png.data = flatten(
     h =>
       times(
         w =>
-          randomColorsGrid[getVertIdx(h, grid)][
+          colorsGrid[getVertIdx(h, grid)][
             getHorizIdx(w, grid)
           ],
         GRID_PIXEL_SIZE,
