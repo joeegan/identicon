@@ -46,7 +46,6 @@ const png = new PNG({
   filterType: -1,
 })
 
-const pink = [200, 50, 100, 255]
 const grey = [200, 200, 200, 255]
 
 const GRID_PIXEL_SIZE = 500
