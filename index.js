@@ -3,6 +3,7 @@ const fs = require('fs')
 const { PNG } = require('pngjs')
 
 const {
+  __,
   add,
   addIndex,
   append,
@@ -42,7 +43,7 @@ const CELL_SIZE = 100
 const CELLS_PER_ROW = divide(500, 100)
 
 const row = times(
-  n => multiply(inc(n), CELL_SIZE),
+  compose(multiply(CELL_SIZE), inc),
   CELLS_PER_ROW
 )
 const grid = repeat(row, CELL_SIZE)
@@ -53,7 +54,7 @@ const hash = crypto
   .update(seed)
   .digest('hex')
 
-const rgbFromHash2 = hash =>
+const rgbaFromHash = hash =>
   compose(
     append(255),
     map(flip(parseInt)(16)),
@@ -63,17 +64,18 @@ const rgbFromHash2 = hash =>
 
 const mirror = arr =>
   addIndex(reject)(
-    (n, i, arr) => equals(i, divide(length(arr), 2)),
-    [...arr, ...reverse(arr)]
-  )
+    (n, i, arr) => equals(i, divide(length(arr), 2))
+  )([...arr, ...reverse(arr)])
+
+const isOdd = n =>
+  compose(
+    Boolean,
+    modulo(__,  2)
+  )(n)
 
 const isColor = (hash, n, i) =>
-  equals(
-    modulo(
-      parseInt(hash[add(n, i)], 16),
-      2
-    ),
-    0
+  isOdd(
+    parseInt(hash[add(n, i)], 16)
   )
 
 const colorsGrid = addIndex(map)(
@@ -81,7 +83,7 @@ const colorsGrid = addIndex(map)(
     times(
       ifElse(
         n => isColor(hash, n, i),
-        n => rgbFromHash2(hash),
+        n => rgbaFromHash(hash),
         n => GREY
       ),
       3
