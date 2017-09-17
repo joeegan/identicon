@@ -43,7 +43,10 @@ const CELL_SIZE = 100
 const CELLS_PER_ROW = divide(500, 100)
 
 const row = times(
-  compose(multiply(CELL_SIZE), inc),
+  compose(
+    multiply(CELL_SIZE),
+    inc
+  ),
   CELLS_PER_ROW
 )
 const grid = repeat(row, CELL_SIZE)
@@ -54,28 +57,26 @@ const hash = crypto
   .update(seed)
   .digest('hex')
 
-const rgbaFromHash = hash =>
-  compose(
-    append(255),
-    map(flip(parseInt)(16)),
-    take(3),
-    splitEvery(2)
-  )(hash)
+const rgbaFromHash = compose(
+  append(255),
+  map(flip(parseInt)(16)),
+  take(3),
+  splitEvery(2)
+)
 
 const mirror = arr =>
   addIndex(reject)(
     (n, i, arr) => equals(i, divide(length(arr), 2))
   )([...arr, ...reverse(arr)])
 
-const isOdd = n =>
-  compose(
-    Boolean,
-    modulo(__,  2)
-  )(n)
+const isOdd = compose(
+  Boolean,
+  modulo(__,  2)
+)
 
 const isColor = (hash, n, i) =>
   isOdd(
-    parseInt(hash[add(n, i)], 16)
+    flip(parseInt)(16)(hash[add(n, i)])
   )
 
 const colorsGrid = addIndex(map)(
