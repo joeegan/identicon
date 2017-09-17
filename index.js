@@ -5,11 +5,13 @@ const { PNG } = require('pngjs')
 const {
   add,
   addIndex,
+  append,
   compose,
   divide,
   equals,
   findIndex,
   flatten,
+  flip,
   head,
   inc,
   ifElse,
@@ -20,7 +22,9 @@ const {
   multiply,
   reverse,
   reject,
+  take,
   times,
+  splitEvery,
 } = require('ramda')
 
 const crypto = require('crypto')
@@ -48,12 +52,13 @@ const hash = crypto
   .update(seed)
   .digest('hex')
 
-const colorBasedOffHash = hash => [
-  parseInt(hash.substring(0, 2), 16),
-  parseInt(hash.substring(2, 4), 16),
-  parseInt(hash.substring(4, 6), 16),
-  255,
-]
+const rgbFromHash2 = hash =>
+  compose(
+    append(255),
+    map(flip(parseInt)(16)),
+    take(3),
+    splitEvery(2)
+  )(hash)
 
 const mirror = arr =>
   addIndex(reject)(
@@ -69,7 +74,7 @@ const colorsGrid = addIndex(map)(
     times(
       ifElse(
         n => isColor(hash, n, i),
-        n => colorBasedOffHash(hash),
+        n => rgbFromHash2(hash),
         n => GREY
       ),
       3
