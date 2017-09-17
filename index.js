@@ -3,39 +3,24 @@ const fs = require('fs')
 const { PNG } = require('pngjs')
 
 const {
-  __,
-  assoc,
+  add,
   addIndex,
   compose,
-  constructN,
   divide,
-  dropLast,
   equals,
-  filter,
   findIndex,
   flatten,
-  forEach,
   head,
-  invoker,
   inc,
-  join,
-  juxt,
-  lens,
+  ifElse,
   length,
   lt,
   map,
   modulo,
   multiply,
-  update,
-  not,
-  prop,
-  range,
+  reverse,
   reject,
-  set,
-  splitEvery,
-  take,
   times,
-  mapObjIndexed,
 } = require('ramda')
 
 const crypto = require('crypto')
@@ -46,19 +31,18 @@ const png = new PNG({
   filterType: -1,
 })
 
-const grey = [200, 200, 200, 255]
-
+const GREY = [200, 200, 200, 255]
 const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
-const CELLS_PER_ROW = 500 / 100
+const CELLS_PER_ROW = divide(500, 100)
 
 const grid = times(
   n =>
     times(n => multiply(inc(n), CELL_SIZE), CELLS_PER_ROW),
-  CELL_SIZE,
+  CELL_SIZE
 )
 
-const seed = 'salad'
+const seed = 'joeegan'
 const hash = crypto
   .createHash('md5')
   .update(seed)
@@ -71,30 +55,33 @@ const colorBasedOffHash = hash => [
   255,
 ]
 
-const mirror = arr => {
-  return addIndex(reject)(
+const mirror = arr =>
+  addIndex(reject)(
     (n, i, arr) => equals(i, divide(length(arr), 2)),
-    [...arr, ...arr.reverse()],
+    [...arr, ...reverse(arr)]
   )
-}
+
+const isColor = (hash, n, i) =>
+  equals(modulo(parseInt(hash[add(n, i)], 16), 2), 0)
 
 const colorsGrid = addIndex(map)(
   compose(mirror, (arr, i) =>
     times(
-      n =>
-        modulo(parseInt(hash[n + i], 16), 2) == 0
-          ? colorBasedOffHash(hash)
-          : grey,
-      3,
-    ),
+      ifElse(
+        n => isColor(hash, n, i),
+        n => colorBasedOffHash(hash),
+        n => GREY
+      ),
+      3
+    )
   ),
-  times(n => [], 5),
+  times(n => [], CELLS_PER_ROW)
 )
 
 const getVertIdx = (h, grid) =>
   addIndex(findIndex)(
     (row, idx) => lt(h, multiply(inc(idx), 100)),
-    grid,
+    grid
   )
 
 const getHorizIdx = (w, grid) =>
@@ -108,10 +95,10 @@ png.data = flatten(
           colorsGrid[getVertIdx(h, grid)][
             getHorizIdx(w, grid)
           ],
-        GRID_PIXEL_SIZE,
+        GRID_PIXEL_SIZE
       ),
-    GRID_PIXEL_SIZE,
-  ),
+    GRID_PIXEL_SIZE
+  )
 )
 
 png.pack().pipe(fs.createWriteStream('identicon.png'))

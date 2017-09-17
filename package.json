@@ -1,13 +1,17 @@
 {
   "name": "identicon",
   "version": "1.0.0",
-  "description": "Using: https://stackoverflow.com/questions/32259142/how-to-use-pngjs-library-to-create-png-from-rgb-matrix#answer-32260288",
+  "description": "Creates an identicon based on a string",
   "main": "index.js",
+  "repository": "https://github.com/joeegan/identicon.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "joeegan",
   "license": "ISC",
+  "devDependencies": {
+    "eslint": "^4.7.0"
+  },
   "dependencies": {
     "pngjs": "^3.3.0",
     "ramda": "^0.24.1"

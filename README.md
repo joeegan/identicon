@@ -1,12 +1,11 @@
-Using: https://stackoverflow.com/questions/32259142/how-to-use-pngjs-library-to-create-png-from-rgb-matrix#answer-32260288
+Fun with [ramda 🐏](http://ramdajs.com/) .
 
-Create and identicon following these steps:
-
+Creates an 'identicon' (e.g. a default github avatar) loosely following this guide (using pngjs):
 http://writings.orangegnome.com/writes/creating-identicons/
 
+Rough steps:
 * Get String
-* Convert string to MD5 hash (take first 15 of this 42 varchar and mirror it)
+* Convert string to MD5 hash
 * Extract identicon color from hash (use the first 3 numbers of hash as RGB)
-* Convert hash values to boolean values to determine each block in the 5×5 grid (paint 'odd' values as colours)
-* Draw image based off of values
-* Output image
+* Convert hash values to boolean values to determine each block in the 5×5 grid
+* Create image based off of values
