@@ -97,6 +97,10 @@
       2,
       "always"
     ],
+    # "function-paren-newline": [
+    #   "error",
+    #   "always"
+    # ],
     "quotes": [
       2,
       "single",

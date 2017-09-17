@@ -22,6 +22,7 @@ const {
   multiply,
   reverse,
   reject,
+  repeat,
   take,
   times,
   splitEvery,
@@ -40,11 +41,11 @@ const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
 const CELLS_PER_ROW = divide(500, 100)
 
-const grid = times(
-  n =>
-    times(n => multiply(inc(n), CELL_SIZE), CELLS_PER_ROW),
-  CELL_SIZE
+const row = times(
+  n => multiply(inc(n), CELL_SIZE),
+  CELLS_PER_ROW
 )
+const grid = repeat(row, CELL_SIZE)
 
 const seed = 'joeegan'
 const hash = crypto
@@ -67,7 +68,13 @@ const mirror = arr =>
   )
 
 const isColor = (hash, n, i) =>
-  equals(modulo(parseInt(hash[add(n, i)], 16), 2), 0)
+  equals(
+    modulo(
+      parseInt(hash[add(n, i)], 16),
+      2
+    ),
+    0
+  )
 
 const colorsGrid = addIndex(map)(
   compose(mirror, (arr, i) =>
