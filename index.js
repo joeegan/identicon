@@ -42,6 +42,9 @@ const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
 const CELLS_PER_ROW = divide(500, 100)
 
+const seed = 'joeegan'
+
+
 const row = times(
   compose(
     multiply(CELL_SIZE),
@@ -51,7 +54,6 @@ const row = times(
 )
 const grid = repeat(row, CELL_SIZE)
 
-const seed = 'joeegan'
 const hash = crypto
   .createHash('md5')
   .update(seed)
@@ -64,10 +66,19 @@ const rgbaFromHash = compose(
   splitEvery(2)
 )
 
-const mirror = arr =>
+const indexToRemove = compose(
+  flip(divide)(2),
+  length
+)
+
+const removeMidRepeated = arr => compose(
   addIndex(reject)(
-    (n, i, arr) => equals(i, divide(length(arr), 2))
-  )([...arr, ...reverse(arr)])
+    flip(equals(indexToRemove(arr)))
+  )
+)(arr)
+
+const mirror = arr =>
+  removeMidRepeated([...arr, ...reverse(arr)])
 
 const isOdd = compose(
   Boolean,
