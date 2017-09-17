@@ -71,11 +71,10 @@ const indexToRemove = compose(
   length
 )
 
-const removeMidRepeated = arr => compose(
+const removeMidRepeated = arr =>
   addIndex(reject)(
     flip(equals(indexToRemove(arr)))
-  )
-)(arr)
+  )(arr)
 
 const mirror = arr =>
   removeMidRepeated([...arr, ...reverse(arr)])
@@ -91,8 +90,9 @@ const isColor = (hash, n, i) =>
   )
 
 const colorsGrid = addIndex(map)(
-  compose(mirror, (arr, i) =>
-    times(
+  compose(
+    mirror,
+    (arr, i) => times(
       ifElse(
         n => isColor(hash, n, i),
         n => rgbaFromHash(hash),
@@ -101,7 +101,7 @@ const colorsGrid = addIndex(map)(
       3
     )
   ),
-  times(n => [], CELLS_PER_ROW)
+  repeat([], CELLS_PER_ROW)
 )
 
 const getVertIdx = (h, grid) =>
