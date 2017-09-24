@@ -13,6 +13,7 @@ const {
   inc,
   init,
   ifElse,
+  lensIndex,
   lt,
   map,
   modulo,
@@ -22,44 +23,49 @@ const {
   take,
   times,
   splitEvery,
+  view,
 } = require('ramda')
 
-const GREY = [200, 200, 200, 255]
+const GREY = [230, 230, 230, 255]
 const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
-const CELLS_PER_ROW = divide(500, 100)
+const CELLS_PER_ROW = divide(GRID_PIXEL_SIZE, CELL_SIZE)
 
 const row = times(
   compose(multiply(CELL_SIZE), inc),
   CELLS_PER_ROW
 )
 const grid = repeat(row, CELL_SIZE)
+const toColorNumber = flip(parseInt)(16)
+const mirror = arr => concat(init(arr), reverse(arr))
+const isOdd = compose(Boolean, modulo(__, 2))
 
 const rgbaFromHash = compose(
   append(255),
-  map(flip(parseInt)(16)),
+  map(toColorNumber),
   take(3),
   splitEvery(2)
 )
 
-const mirror = arr => concat(init(arr), reverse(arr))
-
-const isOdd = compose(Boolean, modulo(__, 2))
-
-const isColor = (hash, n, i) =>
-  isOdd(flip(parseInt)(16)(hash[add(n, i)]))
+const isColor = (hash, n, i) => compose(
+  isOdd,
+  toColorNumber,
+  view(lensIndex(add(n, i)))
+)(hash, n, i)
 
 const getColorsGrid = hash =>
   addIndex(map)(
-    compose(mirror, (arr, i) =>
-      times(
-        ifElse(
-          n => isColor(hash, n, i),
-          n => rgbaFromHash(hash),
-          n => GREY
-        ),
-        3
-      )
+    compose(
+      mirror,
+      (arr, i) =>
+        times(
+          ifElse(
+            n => isColor(hash, n, i),
+            n => rgbaFromHash(hash),
+            n => GREY
+          ),
+          3
+        )
     ),
     repeat([], CELLS_PER_ROW)
   )
@@ -79,7 +85,12 @@ const getPngData = colorsGrid =>
       h =>
         times(
           w =>
-            colorsGrid[getVertIdx(h, grid)][
+            view(
+              lensIndex(
+                getVertIdx(h, grid)
+              ),
+              colorsGrid
+            )[
               getHorizIdx(w, grid)
             ],
           GRID_PIXEL_SIZE

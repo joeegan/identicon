@@ -2,6 +2,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: rgb(230, 230, 230);
 }
 
 div {
