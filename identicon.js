@@ -4,21 +4,20 @@ const {
   addIndex,
   append,
   compose,
+  concat,
   divide,
-  equals,
   findIndex,
   flatten,
   flip,
   head,
   inc,
+  init,
   ifElse,
-  length,
   lt,
   map,
   modulo,
   multiply,
   reverse,
-  reject,
   repeat,
   take,
   times,
@@ -43,15 +42,7 @@ const rgbaFromHash = compose(
   splitEvery(2)
 )
 
-const indexToRemove = compose(flip(divide)(2), length)
-
-const removeMidRepeated = arr =>
-  addIndex(reject)(
-    compose(flip, equals, indexToRemove)(arr)
-  )(arr)
-
-const mirror = arr =>
-  removeMidRepeated([...arr, ...reverse(arr)])
+const mirror = arr => concat(init(arr), reverse(arr))
 
 const isOdd = compose(Boolean, modulo(__, 2))
 
@@ -86,11 +77,13 @@ const getPngData = colorsGrid =>
   flatten(
     times(
       h =>
-        times(w => {
-          return colorsGrid[getVertIdx(h, grid)][
-            getHorizIdx(w, grid)
-          ]
-        }, GRID_PIXEL_SIZE),
+        times(
+          w =>
+            colorsGrid[getVertIdx(h, grid)][
+              getHorizIdx(w, grid)
+            ],
+          GRID_PIXEL_SIZE
+        ),
       GRID_PIXEL_SIZE
     )
   )
