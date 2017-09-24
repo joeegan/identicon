@@ -12,7 +12,7 @@ const getHashFromDate = () =>
     .reverse()
     .join('')
 
-router.get('/:seed', async (req, res) => {
+router.get(['/', '/:seed'], async (req, res) => {
   const seed = or(req.params.seed, getHashFromDate())
 
   const hash = crypto
@@ -23,6 +23,7 @@ router.get('/:seed', async (req, res) => {
   await createPng(hash)
 
   return res.render('index', {
+    title: hash,
     src: './identicon.png'
   })
 })

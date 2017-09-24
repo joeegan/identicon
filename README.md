@@ -9,3 +9,13 @@ Rough steps:
 * Extract identicon color from hash (use the first 3 numbers of hash as RGB)
 * Convert hash values to boolean values to determine each block in the 5×5 grid
 * Create image based off of values
+
+Generate a new png based on a seed
+```shell
+npm run build-png -- --seed=foo
+```
+
+Launch the web app
+```shell
+npm start
+```

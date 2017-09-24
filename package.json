@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./bin/www",
-    "build-png": "node ./build-png.js"
+    "build-png": "node ./build-png-isolation.js"
   },
   "author": "joeegan",
   "license": "ISC",
@@ -17,9 +17,10 @@
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "morgan": "~1.8.1",
-    "serve-favicon": "~2.4.2",
+    "pngjs": "^3.3.0",
     "ramda": "^0.24.1",
-    "pngjs": "^3.3.0"
+    "serve-favicon": "~2.4.2",
+    "yargs-parser": "^7.0.0"
   },
   "devDependencies": {
     "eslint": "^4.7.0"
