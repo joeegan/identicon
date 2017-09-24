@@ -1,5 +1,4 @@
 const {
-  __,
   add,
   addIndex,
   append,
@@ -38,7 +37,7 @@ const row = times(
 const grid = repeat(row, CELL_SIZE)
 const toColorNumber = flip(parseInt)(16)
 const mirror = arr => concat(init(arr), reverse(arr))
-const isOdd = compose(Boolean, modulo(__, 2))
+const isOdd = compose(Boolean, flip(modulo)(2))
 
 const rgbaFromHash = compose(
   append(255),
