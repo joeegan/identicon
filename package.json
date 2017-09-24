@@ -6,15 +6,22 @@
   "repository": "https://github.com/joeegan/identicon.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node ./bin/www",
+    "build-png": "node ./build-png.js"
   },
   "author": "joeegan",
   "license": "ISC",
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
+    "ramda": "^0.24.1",
+    "pngjs": "^3.3.0"
+  },
   "devDependencies": {
     "eslint": "^4.7.0"
-  },
-  "dependencies": {
-    "pngjs": "^3.3.0",
-    "ramda": "^0.24.1"
   }
 }
