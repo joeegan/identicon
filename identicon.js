@@ -20,6 +20,7 @@ const {
   reverse,
   repeat,
   take,
+  tap,
   times,
   splitEvery,
   view,
@@ -38,6 +39,7 @@ const grid = repeat(row, CELL_SIZE)
 const toColorNumber = flip(parseInt)(16)
 const mirror = arr => concat(init(arr), reverse(arr))
 const isOdd = compose(Boolean, flip(modulo)(2))
+const log = tap(console.log)
 
 const rgbaFromHash = compose(
   append(255),
@@ -45,29 +47,59 @@ const rgbaFromHash = compose(
   take(3),
   splitEvery(2)
 )
+const next = (n, i) => view(lensIndex(add(n, i)))
 
-const isColor = (hash, n, i) => compose(
-  isOdd,
-  toColorNumber,
-  view(lensIndex(add(n, i)))
-)(hash, n, i)
+const isColor = (n, i, hash) =>
+  compose(
+    isOdd,
+    toColorNumber,
+    next(n, i)
+  )(hash, n, i)
 
-const getColorsGrid = hash =>
-  addIndex(map)(
-    compose(
-      mirror,
-      (arr, i) =>
-        times(
-          ifElse(
-            n => isColor(hash, n, i),
-            n => rgbaFromHash(hash),
-            n => GREY
-          ),
-          3
-        )
+const create3colorsBasedOnHash = (arr, i, hash) => {
+  console.log({arr}, {i}, {hash})
+  const result = times(
+    ifElse(
+      n => isColor(n, i, hash),
+      n => rgbaFromHash(hash),
+      n => GREY
     ),
+    3
+  )
+  console.log({ result })
+  return result
+}
+
+const populateColorsRow = hash => compose(
+  mirror,
+  (arr, i) => create3colorsBasedOnHash(arr, i, hash)
+)
+
+const getColorsGrid = hash => {
+  console.log({ hash })
+  const result = addIndex(map)(
+    populateColorsRow(hash),
     repeat([], CELLS_PER_ROW)
   )
+  console.log('get result', result)
+  return result
+}
+
+// const createBooleanRow = compose(
+//   isOdd,
+//   toColorNumber,
+//   view(lensIndex(add(n, i)))
+// )
+//
+// const getBooleanGrid = hash => {
+//   console.log({ hash })
+//   const result = addIndex(map)(
+//     createBooleanRow(hash),
+//     repeat([], CELLS_PER_ROW)
+//   )
+//   console.log('get result', result);
+//   return result;
+// }
 
 const getVertIdx = (h, grid) =>
   addIndex(findIndex)(
@@ -85,13 +117,9 @@ const getPngData = colorsGrid =>
         times(
           w =>
             view(
-              lensIndex(
-                getVertIdx(h, grid)
-              ),
+              lensIndex(getVertIdx(h, grid)),
               colorsGrid
-            )[
-              getHorizIdx(w, grid)
-            ],
+            )[getHorizIdx(w, grid)],
           GRID_PIXEL_SIZE
         ),
       GRID_PIXEL_SIZE
