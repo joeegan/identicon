@@ -1,7 +1,5 @@
 const {
-  __,
   always,
-  chain,
   compose,
   concat,
   drop,
@@ -14,6 +12,8 @@ const {
   reverse,
   repeat,
   take,
+  // tap,
+  // nthArg,
   splitEvery,
 } = require('ramda')
 
@@ -66,14 +66,14 @@ const getColorsGrid = compose(
   getHashMultiArray,
 )
 
-const multiplyForGridSize = repeat(__, CELL_SIZE)
+const multiplyForGridSize = flip(repeat)(CELL_SIZE)
 
 const getPngDataFromColorsGrid = compose(
   flatten,
-  chain(
+  map(
     compose(
       multiplyForGridSize, // increases number of vertical cells
-      chain(multiplyForGridSize), // increases number of horizontal cells
+      map(multiplyForGridSize), // increases number of horizontal cells
     ),
   ),
 )
