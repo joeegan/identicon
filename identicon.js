@@ -1,5 +1,6 @@
 const {
   always,
+  append,
   compose,
   concat,
   drop,
@@ -12,7 +13,7 @@ const {
   reverse,
   repeat,
   take,
-  // tap,
+  tap,
   // nthArg,
   splitEvery,
 } = require('ramda')
@@ -32,6 +33,7 @@ const mirror = arr => concat(init(arr), reverse(arr))
 // const hash = 'fd137d7ee9bf0b107fc37cbafb0e8d7a'
 
 const rgbaFromHash = compose(
+  append(255),
   map(toColorNumber),
   take(3),
   splitEvery(2),
@@ -43,25 +45,21 @@ const getHashMultiArray = compose(
   drop(2),
 )
 
-// TODO recieve primaryColor
-const primaryColor = [255,0,40,255]
-
-const color = ifElse(
+const color = primaryColor => ifElse(
   isOdd,
   always(primaryColor),
   always(GREY),
 )
 
-const hashValueToColorValue = map(
+const hashValueToColorValue = primaryColor => map(
   compose(
-    color,
+    color(primaryColor),
     toColorNumber,
   ),
 )
 
-// TODO now also takes primaryColor as second arg
-const getColorsGrid = compose(
-  map(hashValueToColorValue),
+const getColorsGrid = primaryColor => compose(
+  map(hashValueToColorValue(primaryColor)),
   map(mirror),
   getHashMultiArray,
 )

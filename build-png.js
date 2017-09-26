@@ -15,8 +15,8 @@ const createPng = hash => {
     filterType: -1,
   })
   const primaryColor = rgbaFromHash(hash)
-  console.log({ primaryColor })
-  const colorsGrid = getColorsGrid(hash, primaryColor)
+  // console.log({ primaryColor })
+  const colorsGrid = getColorsGrid(primaryColor)(hash)
   // console.log({ colorsGrid: JSON.stringify(colorsGrid) })
   // console.log({ pngData: getPngDataFromColorsGrid(colorsGrid) })
   png.data = getPngDataFromColorsGrid(colorsGrid)
