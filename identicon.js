@@ -1,132 +1,85 @@
 const {
-  add,
-  addIndex,
-  append,
+  __,
+  always,
+  chain,
   compose,
   concat,
-  divide,
-  findIndex,
+  drop,
   flatten,
   flip,
-  head,
-  inc,
   init,
   ifElse,
-  lensIndex,
-  lt,
   map,
   modulo,
-  multiply,
   reverse,
   repeat,
   take,
-  tap,
-  times,
   splitEvery,
-  view,
 } = require('ramda')
 
 const GREY = [230, 230, 230, 255]
-const GRID_PIXEL_SIZE = 500
 const CELL_SIZE = 100
-const CELLS_PER_ROW = divide(GRID_PIXEL_SIZE, CELL_SIZE)
 
-const row = times(
-  compose(multiply(CELL_SIZE), inc),
-  CELLS_PER_ROW
-)
-const grid = repeat(row, CELL_SIZE)
 const toColorNumber = flip(parseInt)(16)
+
+const isOdd = compose(
+  Boolean,
+  flip(modulo)(2),
+)
+
 const mirror = arr => concat(init(arr), reverse(arr))
-const isOdd = compose(Boolean, flip(modulo)(2))
-const log = tap(console.log)
+
+// const hash = 'fd137d7ee9bf0b107fc37cbafb0e8d7a'
 
 const rgbaFromHash = compose(
-  append(255),
   map(toColorNumber),
   take(3),
-  splitEvery(2)
+  splitEvery(2),
 )
-const next = (n, i) => view(lensIndex(add(n, i)))
 
-const isColor = (n, i, hash) =>
+const getHashMultiArray = compose(
+  splitEvery(3),
+  splitEvery(2),
+  drop(2),
+)
+
+// TODO recieve primaryColor
+const primaryColor = [255,0,40,255]
+
+const color = ifElse(
+  isOdd,
+  always(primaryColor),
+  always(GREY),
+)
+
+const hashValueToColorValue = map(
   compose(
-    isOdd,
+    color,
     toColorNumber,
-    next(n, i)
-  )(hash, n, i)
-
-const create3colorsBasedOnHash = (arr, i, hash) => {
-  console.log({arr}, {i}, {hash})
-  const result = times(
-    ifElse(
-      n => isColor(n, i, hash),
-      n => rgbaFromHash(hash),
-      n => GREY
-    ),
-    3
-  )
-  console.log({ result })
-  return result
-}
-
-const populateColorsRow = hash => compose(
-  mirror,
-  (arr, i) => create3colorsBasedOnHash(arr, i, hash)
+  ),
 )
 
-const getColorsGrid = hash => {
-  console.log({ hash })
-  const result = addIndex(map)(
-    populateColorsRow(hash),
-    repeat([], CELLS_PER_ROW)
-  )
-  console.log('get result', result)
-  return result
-}
+// TODO now also takes primaryColor as second arg
+const getColorsGrid = compose(
+  map(hashValueToColorValue),
+  map(mirror),
+  getHashMultiArray,
+)
 
-// const createBooleanRow = compose(
-//   isOdd,
-//   toColorNumber,
-//   view(lensIndex(add(n, i)))
-// )
-//
-// const getBooleanGrid = hash => {
-//   console.log({ hash })
-//   const result = addIndex(map)(
-//     createBooleanRow(hash),
-//     repeat([], CELLS_PER_ROW)
-//   )
-//   console.log('get result', result);
-//   return result;
-// }
+const multiplyForGridSize = repeat(__, CELL_SIZE)
 
-const getVertIdx = (h, grid) =>
-  addIndex(findIndex)(
-    (row, idx) => lt(h, multiply(inc(idx), 100)),
-    grid
-  )
-
-const getHorizIdx = (w, grid) =>
-  findIndex(n => lt(w, n), head(grid))
-
-const getPngData = colorsGrid =>
-  flatten(
-    times(
-      h =>
-        times(
-          w =>
-            view(
-              lensIndex(getVertIdx(h, grid)),
-              colorsGrid
-            )[getHorizIdx(w, grid)],
-          GRID_PIXEL_SIZE
-        ),
-      GRID_PIXEL_SIZE
-    )
-  )
+const getPngDataFromColorsGrid = compose(
+  flatten,
+  chain(
+    compose(
+      multiplyForGridSize, // increases number of vertical cells
+      chain(multiplyForGridSize), // increases number of horizontal cells
+    ),
+  ),
+)
 
 module.exports = {
+  rgbaFromHash,
   getColorsGrid,
-  getPngData,
+  getPngDataFromColorsGrid,
 }

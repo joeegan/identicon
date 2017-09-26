@@ -1,4 +1,9 @@
-const { getColorsGrid, getPngData } = require('./identicon')
+const {
+  rgbaFromHash,
+  getColorsGrid,
+  getPngDataFromColorsGrid,
+} = require('./identicon')
+
 const { PNG } = require('pngjs')
 const fs = require('fs')
 const IDENTICON_URL = 'public/identicon.png'
@@ -9,7 +14,12 @@ const createPng = hash => {
     height: 500,
     filterType: -1,
   })
-  png.data = getPngData(getColorsGrid(hash))
+  const primaryColor = rgbaFromHash(hash)
+  console.log({ primaryColor })
+  const colorsGrid = getColorsGrid(hash, primaryColor)
+  // console.log({ colorsGrid: JSON.stringify(colorsGrid) })
+  // console.log({ pngData: getPngDataFromColorsGrid(colorsGrid) })
+  png.data = getPngDataFromColorsGrid(colorsGrid)
   png.pack().pipe(fs.createWriteStream(IDENTICON_URL))
   return true
 }
