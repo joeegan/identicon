@@ -4,22 +4,17 @@ const {
   compose,
   concat,
   drop,
-  flatten,
   flip,
   init,
   ifElse,
   map,
   modulo,
   reverse,
-  repeat,
   take,
-  tap,
-  // nthArg,
   splitEvery,
 } = require('ramda')
 
 const GREY = [230, 230, 230, 255]
-const CELL_SIZE = 100
 
 const toColorNumber = flip(parseInt)(16)
 
@@ -29,8 +24,6 @@ const isOdd = compose(
 )
 
 const mirror = arr => concat(init(arr), reverse(arr))
-
-// const hash = 'fd137d7ee9bf0b107fc37cbafb0e8d7a'
 
 const rgbaFromHash = compose(
   append(255),
@@ -45,7 +38,7 @@ const getHashMultiArray = compose(
   drop(2),
 )
 
-const color = primaryColor => ifElse(
+const chooseColor = primaryColor => ifElse(
   isOdd,
   always(primaryColor),
   always(GREY),
@@ -53,7 +46,7 @@ const color = primaryColor => ifElse(
 
 const hashValueToColorValue = primaryColor => map(
   compose(
-    color(primaryColor),
+    chooseColor(primaryColor),
     toColorNumber,
   ),
 )
@@ -64,20 +57,7 @@ const getColorsGrid = primaryColor => compose(
   getHashMultiArray,
 )
 
-const multiplyForGridSize = flip(repeat)(CELL_SIZE)
-
-const getPngDataFromColorsGrid = compose(
-  flatten,
-  map(
-    compose(
-      multiplyForGridSize, // increases number of vertical cells
-      map(multiplyForGridSize), // increases number of horizontal cells
-    ),
-  ),
-)
-
 module.exports = {
   rgbaFromHash,
   getColorsGrid,
-  getPngDataFromColorsGrid,
 }

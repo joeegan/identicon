@@ -18,8 +18,9 @@
     "express": "~4.15.2",
     "morgan": "~1.8.1",
     "pngjs": "^3.3.0",
+    "pug": "^2.0.0-rc.4",
     "ramda": "^0.24.1",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "^2.4.5"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

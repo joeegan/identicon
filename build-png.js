@@ -1,27 +1,44 @@
+const fs = require('fs')
+const { PNG } = require('pngjs')
+const {
+  compose,
+  construct,
+  flatten,
+  flip,
+  map,
+  repeat,
+} = require('ramda')
 const {
   rgbaFromHash,
   getColorsGrid,
-  getPngDataFromColorsGrid,
 } = require('./identicon')
 
-const { PNG } = require('pngjs')
-const fs = require('fs')
 const IDENTICON_URL = 'public/identicon.png'
+const CELL_SIZE = 100
+const GRID_PX_WIDTH = 500
+
+const multiplyForGridSize = flip(repeat)(CELL_SIZE)
+
+const colorsGridToPngData = compose(
+  flatten,
+  map(
+    compose(
+      multiplyForGridSize,
+      map(multiplyForGridSize),
+    ),
+  ),
+)
 
 const createPng = hash => {
-  const png = new PNG({
-    width: 500,
-    height: 500,
-    filterType: -1,
-  })
   const primaryColor = rgbaFromHash(hash)
-  // console.log({ primaryColor })
   const colorsGrid = getColorsGrid(primaryColor)(hash)
-  // console.log({ colorsGrid: JSON.stringify(colorsGrid) })
-  // console.log({ pngData: getPngDataFromColorsGrid(colorsGrid) })
-  png.data = getPngDataFromColorsGrid(colorsGrid)
+  const opts = {
+    width: GRID_PX_WIDTH,
+    height: GRID_PX_WIDTH,
+  }
+  const png = construct(PNG)(opts)
+  png.data = colorsGridToPngData(colorsGrid)
   png.pack().pipe(fs.createWriteStream(IDENTICON_URL))
-  return true
 }
 
 module.exports = {
