@@ -5,7 +5,10 @@
     "Symbol": true,
     "process": true,
     "console": true,
-    "module": true
+    "module": true,
+    "Rx": true,
+    "widow": true,
+    "document": true
   },
   "rules": {
     "max-len": [2, 80, 2],

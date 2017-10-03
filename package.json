@@ -6,7 +6,7 @@
   "repository": "https://github.com/joeegan/identicon.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www",
+    "start": "nodemon ./bin/www",
     "build-png": "node ./build-png-isolation.js"
   },
   "author": "joeegan",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "eslint": "^4.7.0",
+    "nodemon": "^1.12.1",
     "yargs-parser": "^7.0.0"
   }
 }

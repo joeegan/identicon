@@ -14,3 +14,11 @@ div {
 img {
   margin: 10px auto;
 }
+
+input {
+  width: 200px;
+  margin: 100px auto;
+  font-size: 40px;
+  text-align: center;
+  color: #666;
+}

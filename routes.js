@@ -24,8 +24,21 @@ router.get(['/', '/:seed'], async (req, res) => {
 
   return res.render('index', {
     title: hash,
-    src: './identicon.png'
+    src: './identicon.png',
   })
+})
+
+router.get(['/img-only:seed'], async (req, res) => {
+  const seed = req.params.seed
+
+  const hash = crypto
+    .createHash('md5')
+    .update(seed)
+    .digest('hex')
+
+  await createPng(hash)
+
+  return true
 })
 
 module.exports = router
