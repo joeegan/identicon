@@ -14,8 +14,8 @@ const {
 } = require('./identicon')
 
 const IDENTICON_URL = 'public/identicon.png'
-const CELL_SIZE = 100
-const GRID_PX_WIDTH = 500
+const CELL_SIZE = 50
+const GRID_PX_WIDTH = 250
 
 const multiplyForGridSize = flip(repeat)(CELL_SIZE)
 

@@ -14,7 +14,7 @@ const {
   splitEvery,
 } = require('ramda')
 
-const GREY = [230, 230, 230, 255]
+const GREY = [230, 230, 230, 200]
 
 const toColorNumber = flip(parseInt)(16)
 
