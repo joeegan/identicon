@@ -1,44 +1,27 @@
 const express = require('express')
-const { createPng } = require('./build-png')
 const router = express.Router()
-const crypto = require('crypto')
-const { or } = require('ramda')
+const { compose } = require('ramda')
+const { createPng } = require('./build-png')
+const { getSeedFromDate, getHashFromSeed } = require('./hash')
 
-const getHashFromDate = () =>
-  new Date()
-    .getTime()
-    .toString()
-    .split('')
-    .reverse()
-    .join('')
+router.get(['/'], async (req, res) => {
+  const hash = compose(
+    getHashFromSeed,
+    getSeedFromDate
+  )
 
-router.get(['/', '/:seed'], async (req, res) => {
-  const seed = or(req.params.seed, getHashFromDate())
-
-  const hash = crypto
-    .createHash('md5')
-    .update(seed)
-    .digest('hex')
-
-  await createPng(hash)
+  await createPng(hash())
 
   return res.render('index', {
     title: hash,
-    src: './identicon.png',
+    src: './identicon.png?0',
   })
 })
 
-router.get(['/img-only:seed'], async (req, res) => {
-  const seed = req.params.seed
-
-  const hash = crypto
-    .createHash('md5')
-    .update(seed)
-    .digest('hex')
-
+router.get(['/img-only-:seed'], async (req, res) => {
+  const hash = getHashFromSeed(req.params.seed)
   await createPng(hash)
-
-  return true
+  return res.sendStatus(200)
 })
 
 module.exports = router

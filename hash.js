@@ -9,10 +9,10 @@ const getSeedFromDate = () =>
     .reverse()
     .join('')
 
-const createHash = seed =>
+const getHashFromSeed = seed =>
   crypto.createHash('md5').update(seed).digest('hex')
 
 module.exports = {
   getSeedFromDate,
-  createHash,
+  getHashFromSeed,
 }

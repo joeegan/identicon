@@ -1,5 +1,5 @@
 const { compose, or } = require('ramda')
-const { getSeedFromDate, createHash } = require('./hash')
+const { getSeedFromDate, getHashFromSeed } = require('./hash')
 const { createPng } = require('./build-png')
 const argv = require('yargs-parser')(process.argv.slice(2))
 
@@ -7,5 +7,5 @@ const seed = or(argv.seed, getSeedFromDate())
 
 compose(
   createPng,
-  createHash,
+  getHashFromSeed,
 )(seed)

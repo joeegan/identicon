@@ -11,7 +11,6 @@ const input = Rx.Observable.fromEvent(
 )
 
 const img = document.querySelector('img')
-img.src = img.src += '?0'
 
 const requestStream = seed => Rx.Observable.of(`/img-only-${seed}`)
 
@@ -21,7 +20,7 @@ const responseStream = seed => requestStream(seed)
   )
 
 input.map(event => event.target.value)
-  .debounce(_ => Rx.Observable.interval(400))
+  .debounce(() => Rx.Observable.interval(400))
   .subscribe(value => {
     responseStream(value).subscribe(response => {
       img.src = img.src.replace(/(\d+)$/g, new Date().getTime())
