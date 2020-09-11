@@ -26,6 +26,6 @@
     "babel-eslint": "^7.2.3",
     "eslint": "^4.7.0",
     "nodemon": "^1.12.1",
-    "yargs-parser": "^7.0.0"
+    "yargs-parser": "^13.1.2"
   }
 }
